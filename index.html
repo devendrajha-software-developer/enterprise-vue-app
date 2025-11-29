@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Vue App - ES Modules</title>
+    <link rel="stylesheet" href="./styles/global.sass">
+</head>
+<body>
+    <div id="app">
+        <main class="app-container">
+            <header class="app-header">
+                <h1>Content Management System</h1>
+                
+                <user-profile
+                    :user-id="currentUser.id"
+                    :display-name="currentUser.name"
+                    :avatar-url="currentUser.avatar"
+                    :role="currentUser.role"
+                    :bio="currentUser.bio"
+                    :is-online="currentUser.isOnline"
+                    :stats="userStats"
+                    @follow-user="handleFollow"
+                />
+            </header>
+
+            <section class="content-grid">
+                <aside class="sidebar">
+                    <h3>Featured Articles</h3>
+                    <article-card
+                        v-for="article in featuredArticles"
+                        :key="article.id"
+                        v-bind="article"
+                        is-featured
+                        @article-liked="handleArticleLiked"
+                        @share-article="handleShareArticle"
+                    />
+                </aside>
+
+                <main class="main-content">
+                    <h2>Recent Articles</h2>
+                    <article-card
+                        v-for="article in recentArticles"
+                        :key="article.id"
+                        v-bind="article"
+                        @article-liked="handleArticleLiked"
+                        @share-article="handleShareArticle"
+                    />
+                    
+                    <section class="data-table-section">
+                        <h2>User Management</h2>
+                        <data-table
+                            :data="tableData"
+                            :columns="tableColumns"
+                            title="User Management"
+                            :selectable="true"
+                            :sortable="true"
+                            :pagination="{ itemsPerPage: 5 }"
+                            @selection-change="handleSelection"
+                            @sort-change="handleSort"
+                            @row-click="handleRowClick"
+                        >
+                            <template #cell-status="{ value }">
+                                <span :class="`status status-${value.toLowerCase()}`">{{ value }}</span>
+                            </template>
+                            
+                            <template #row-actions="{ row }">
+                                <button class="btn btn--small" @click.stop="editUser(row)">
+                                    Edit
+                                </button>
+                                <button class="btn btn--small btn--danger" @click.stop="deleteUser(row)">
+                                    Delete
+                                </button>
+                            </template>
+                            
+                            <template #empty>
+                                <div class="data-table__empty-state">
+                                    <span class="data-table__empty-icon">👥</span>
+                                    <p>No users found</p>
+                                    <button class="btn btn--primary" @click="addUser">
+                                        Add New User
+                                    </button>
+                                </div>
+                            </template>
+                        </data-table>
+                    </section>
+                </main>
+            </section>
+        </main>
+    </div>
+
+    <!-- ES Module entry point -->
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
